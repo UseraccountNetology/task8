@@ -1,38 +1,45 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <unordered_set>
 
 using namespace std;
 
-void search_dubl(std::vector<int> &a)
+// Вариант 1: с использованием std::sort + std::unique (изменяет порядок элементов)
+void remove_duplicates_sort(vector<int>& a)
 {
-    int value=0;
-
-    for(int i=0;i<a.size();i++)
-    {
-        value=a[i];
-
-        for(int j=0;j<a.size();j++)
-        {
-            if(i!=j)
-            {
-                if(value==a[j])
-                {
-                    a.erase(a.begin()+j);
-                }
-            }
-        }
-    }
+    sort(a.begin(), a.end());
+    a.erase(unique(a.begin(), a.end()), a.end());
 }
 
-//точка входа
+// Вариант 2: с сохранением порядка элементов (через unordered_set)
+void remove_duplicates_ordered(vector<int>& a)
+{
+    unordered_set<int> seen;
+    a.erase(
+        remove_if(a.begin(), a.end(),
+            [&seen](int x) {
+                return !seen.insert(x).second; // true, если элемент уже был
+            }),
+        a.end()
+    );
+}
+
 int main()
 {
-    //список чисел
-    std::vector<int> listVector={1,2,3,4,4,5,5,6,6};
+    vector<int> listVector = {1, 2, 3, 4, 4, 5, 5, 6, 6};
 
-    //поиск иудаление дубликатов
-    search_dubl(listVector);
+    // Вариант 1: удаление дубликатов с сортировкой
+    // remove_duplicates_sort(listVector);
 
-    cout << "Hello World!" << endl;
+    // Вариант 2: удаление дубликатов с сохранением порядка
+    remove_duplicates_ordered(listVector);
+
+    cout << "Результат: ";
+    for (int x : listVector) {
+        cout << x << " ";
+    }
+    cout << endl;
+
     return 0;
 }
